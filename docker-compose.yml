@@ -1,0 +1,27 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      BOT_MODE: webhook
+      DATABASE_PATH: data/tg-dnd.sqlite
+    volumes:
+      - ./data:/app/server/data
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

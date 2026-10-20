@@ -25,3 +25,39 @@ Telegram-бот и Mini App для набора партий в настольн
 
 - [docs/architecture.md](docs/architecture.md) — архитектура, нагрузка, жизненный цикл кампании.
 - [docs/ux.md](docs/ux.md) — интерфейс бота, сценарии и напоминания.
+
+## Структура
+
+- `server/` — бот и API: grammY, Fastify, Drizzle ORM, SQLite.
+- `web/` — Mini App: React и Vite.
+- `docs/` — архитектура и сценарии.
+
+## Разработка
+
+Нужны Node.js 22+ и тестовый бот, созданный в @BotFather.
+
+1. Установите зависимости: `npm install`.
+2. Скопируйте `.env.example` в `.env` и заполните `BOT_TOKEN` и `ADMIN_TG_IDS`.
+3. Telegram открывает Mini App только по HTTPS, поэтому нужен туннель к
+   Vite, например `cloudflared tunnel --url http://localhost:5173`. Адрес
+   туннеля укажите в `MINI_APP_URL`.
+4. Запустите в двух терминалах:
+   - `npm run dev:server` — бот в режиме polling и API на порту 3000;
+   - `npm run dev:web` — Mini App на порту 5173, запросы `/api` уходят на сервер.
+5. Напишите боту `/start`: кнопка «Выбрать игру» откроет Mini App.
+
+Проверки: `npm test` и `npm run typecheck`.
+
+Схема базы описана в `server/src/db/schema.ts`. После её изменения выполните
+`npm run db:generate`: миграция появится в `server/drizzle` и применится при
+следующем запуске сервера.
+
+## Развёртывание
+
+1. Нужен VPS с Docker. A-запись домена должна указывать на сервер.
+2. Склонируйте репозиторий и скопируйте `.env.example` в `.env`. Заполните
+   `BOT_TOKEN`, `DOMAIN`, `PUBLIC_URL`, `MINI_APP_URL`, `WEBHOOK_SECRET` и
+   `ADMIN_TG_IDS`.
+3. Выполните `docker compose up -d --build`. Caddy сам получит
+   HTTPS-сертификат, а бот переключится на webhook.
+4. База SQLite лежит в папке `data/`. Её и нужно копировать для резервных копий.

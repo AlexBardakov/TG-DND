@@ -1,0 +1,25 @@
+/* Telegram sets --tg-theme-* to the user's theme; the fallbacks cover a plain browser. */
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #1a1a1a);
+}
+
+body {
+  margin: 0;
+}
+
+.screen {
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.hint {
+  color: var(--tg-theme-hint-color, #707070);
+}
