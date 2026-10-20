@@ -102,7 +102,8 @@
   - исключить игрока;
   - сбросить неуместный псевдоним;
   - закрепить сообщение;
-  - закрыть обсуждение.
+  - закрыть обсуждение;
+  - подать админам заявку на бан игрока с причиной.
 - **Жалобы.** Кнопка «Пожаловаться» под копией отправляет жалобу мастеру этой
   кампании, а при необходимости — админам клуба.
 
@@ -325,7 +326,7 @@ Mini App открывается из меню основного бота. Бэ�
   - назначение мастеров и админов;
   - пул ботов и его метрики;
   - журнал жалоб;
-  - баны.
+  - заявки мастеров на бан и баны.
 
 Оплата в сервисе не реализуется. Стоимость только показывается, а платят
 переводом.
@@ -339,6 +340,7 @@ Mini App открывается из меню основного бота. Бэ�
 | `campaigns` | `id`, `title`, `description`, `kind` (oneshot/long), `first_session_at`, `duration_min`, `format` (offline/online), `location`, `price`, `seats_min`, `seats_max`, `gm_user_id`, `relay_bot_id`, `group_chat_id`, `status`, `revealed_at` |
 | `memberships` | `id`, `campaign_id`, `user_id`, `ordinal` (для «Странник #N», не переиспользуется), `character_name`, `is_anonymous`, `topic_thread_id`, `muted_until`, `status` (active/left/removed), `confirmed_at`, `left_at`, `leave_reason`, `late_cancel`, `attended` |
 | `waitlist` | `campaign_id`, `user_id`, `created_at`, `notified_at` (очередь «Уведомить, если освободится место») |
+| `ban_requests` | `id`, `user_id`, `gm_user_id`, `campaign_id`, `reason`, `status` (open/approved/rejected), `decided_by`, `decided_at` |
 | `nudges` | `user_id`, `campaign_id`, `kind`, `due_at`, `sent_at`, `cancelled_at` (запланированные и отправленные напоминания) |
 | `bot_users` | `bot_id`, `user_id`, `started_at`, `blocked_at` (кто какого бота запустил) |
 | `relay_messages` | `id`, `campaign_id`, `author_membership_id`, `origin_chat_id`, `origin_message_id`, `reply_to_relay_id`, `created_at` |
@@ -368,10 +370,3 @@ Mini App открывается из меню основного бота. Бэ�
   Redis не нужен.
 - **Развёртывание:** один Docker-контейнер на слабом VPS (1 vCPU, 1 ГБ).
 
-## 12. Открытые вопросы
-
-1. Банят только админы (глобально) или мастер тоже может закрыть игроку доступ
-   к своим кампаниям?
-2. Освободившееся место сразу видно всем в каталоге, а лист ожидания получает
-   уведомления волнами. Или первым в очереди нужно дать окно, когда место
-   доступно только им?
