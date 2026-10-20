@@ -153,6 +153,7 @@
   «🎭 Снять маски» в карточке кампании.
 - Если встреча перенесена, мастер меняет дату, и раскрытие сдвигается вместе
   с ней.
+- Онлайн-игры раскрываются точно так же, как офлайн: после первой встречи.
 
 **Что происходит:**
 
@@ -312,17 +313,19 @@ Mini App открывается из меню основного бота. Бэ�
   - список кампаний: тип, описание, дата первой встречи, формат, стоимость,
     места;
   - карточка кампании;
-  - запись, лист ожидания, выход из набора;
+  - запись, «Уведомить, если освободится место», выход из набора;
   - «мои игры».
 - **Мастер:**
   - создание и редактирование кампаний для себя и других мастеров;
-  - реальный состав кампании и контакты игроков;
+  - реальный состав кампании, контакты игроков и их надёжность (поздние
+    отказы, неявки);
   - привязка группы для долгой кампании;
   - снятие масок, перенос и отмена игры.
 - **Админы клуба** (их может быть несколько):
   - назначение мастеров и админов;
   - пул ботов и его метрики;
-  - журнал жалоб.
+  - журнал жалоб;
+  - баны.
 
 Оплата в сервисе не реализуется. Стоимость только показывается, а платят
 переводом.
@@ -332,10 +335,11 @@ Mini App открывается из меню основного бота. Бэ�
 | Таблица | Поля |
 |---|---|
 | `bots` | `id`, `username`, `token_enc`, `kind` (main/relay), `status`, `rate_limit` |
-| `users` | `id`, `tg_id`, `username`, `first_name`, `is_gm`, `is_admin`, `phone`, `contact_note`, `consent_at` |
-| `campaigns` | `id`, `title`, `description`, `kind` (oneshot/long), `first_session_at`, `duration_min`, `format` (offline/online), `location`, `price`, `seats_total`, `gm_user_id`, `relay_bot_id`, `group_chat_id`, `status`, `revealed_at` |
-| `memberships` | `id`, `campaign_id`, `user_id`, `ordinal` (для «Странник #N», не переиспользуется), `character_name`, `is_anonymous`, `topic_thread_id`, `muted_until`, `status` (active/waitlist/left/removed), `confirmed_at` |
-| `nudges` | `user_id`, `campaign_id`, `kind`, `sent_at` (какие напоминания уже отправлены) |
+| `users` | `id`, `tg_id`, `username`, `first_name`, `is_gm`, `is_admin`, `phone`, `contact_note`, `consent_at`, `banned_at`, `ban_reason` |
+| `campaigns` | `id`, `title`, `description`, `kind` (oneshot/long), `first_session_at`, `duration_min`, `format` (offline/online), `location`, `price`, `seats_min`, `seats_max`, `gm_user_id`, `relay_bot_id`, `group_chat_id`, `status`, `revealed_at` |
+| `memberships` | `id`, `campaign_id`, `user_id`, `ordinal` (для «Странник #N», не переиспользуется), `character_name`, `is_anonymous`, `topic_thread_id`, `muted_until`, `status` (active/left/removed), `confirmed_at`, `left_at`, `leave_reason`, `late_cancel`, `attended` |
+| `waitlist` | `campaign_id`, `user_id`, `created_at`, `notified_at` (очередь «Уведомить, если освободится место») |
+| `nudges` | `user_id`, `campaign_id`, `kind`, `due_at`, `sent_at`, `cancelled_at` (запланированные и отправленные напоминания) |
 | `bot_users` | `bot_id`, `user_id`, `started_at`, `blocked_at` (кто какого бота запустил) |
 | `relay_messages` | `id`, `campaign_id`, `author_membership_id`, `origin_chat_id`, `origin_message_id`, `reply_to_relay_id`, `created_at` |
 | `relay_copies` | `relay_message_id`, `recipient_membership_id`, `chat_id`, `message_id` |
@@ -366,10 +370,8 @@ Mini App открывается из меню основного бота. Бэ�
 
 ## 12. Открытые вопросы
 
-Значения по умолчанию для интерфейса и напоминаний предложены в [ux.md](ux.md).
-Нужно подтвердить:
-
-1. Лист ожидания: сколько часов держать освободившееся место за первым в
-   очереди (предложено 12)?
-2. Кнопка «Не смогу» в напоминании за сутки сразу освобождает место?
-3. Нужен ли минимум игроков, без которого игра отменяется?
+1. Банят только админы (глобально) или мастер тоже может закрыть игроку доступ
+   к своим кампаниям?
+2. Освободившееся место сразу видно всем в каталоге, а лист ожидания получает
+   уведомления волнами. Или первым в очереди нужно дать окно, когда место
+   доступно только им?
